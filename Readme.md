@@ -23,4 +23,19 @@ short: npm install -D typescript nodemon ts-node @types/node
 2. npm install -D @types/express => for type definitions.
 
 
+#dotenv.
+1. npm install dotenv
+2. npm i -D @types/dotenv
+
 ```
+
+
+# Development (with nodemon + ts-node)
+1. npm run dev
+
+# Build for production
+2. npm run build
+
+# Run production build
+3. npm start
+
