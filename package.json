@@ -2,9 +2,9 @@
   "name": "api-authenticationmastery",
   "version": "1.0.0",
   "description": "This is API-Mastery with using NodeJS, ExpressJs, MongoDB, Mongoose, Typescript.",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
-    "start": "nodemone index.js"
+    "dev": "nodemon server.ts"
   },
   "keywords": [
     "RestFull",
