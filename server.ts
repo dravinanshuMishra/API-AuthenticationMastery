@@ -1,6 +1,12 @@
-console.log("first");
-console.log("ok");
+import app from "./src/app";
 
-console.log("heheh");
+const port = process.env.PORT || 8080;
 
-console.log("uyy");
+// server start.
+const serverStart = () => {
+    app.listen(port, () => {
+        console.log(`server is running at port ${port}`)
+    });
+}
+
+serverStart();

@@ -16,6 +16,11 @@ short: npm install -D typescript nodemon ts-node @types/node
 
 1. npx tsc --init => for install typescript in this project.
 2. npm init @eslint/config@latest => for eslint for best practice.
-3.
+
+
+# Now install ExpressJS.
+1. npm i express.
+2. npm install -D @types/express => for type definitions.
+
 
 ```
