@@ -1,4 +1,5 @@
 # stepUp instructions.
+
 ```javascript
 
 1. npm init → project ke liye ek package.json file banata hai jisme project ki details aur dependencies ka record hota hai.
@@ -15,6 +16,6 @@ short: npm install -D typescript nodemon ts-node @types/node
 
 1. npx tsc --init => for install typescript in this project.
 2. npm init @eslint/config@latest => for eslint for best practice.
-3. 
+3.
 
 ```
