@@ -32,6 +32,10 @@ short: npm install -D typescript nodemon ts-node @types/node
 1. npm i mongoose.
 2. npm i -D @types/mongoose
 
+# create formated errors for global error handling.
+1. npm i http-errors
+2. npm i -D @types/http-errors
+
 ```
 
 

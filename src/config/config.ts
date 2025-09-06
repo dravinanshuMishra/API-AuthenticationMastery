@@ -9,7 +9,8 @@ const _config = {
   db_user: process.env.DB_USER,
   db_pass: process.env.DB_PASS,
   db_cluster: process.env.DB_CLUSTER,
-  db_options: process.env.DB_OPTIONS
+  db_options: process.env.DB_OPTIONS,
+  node_env: process.env.NODE_ENV,
 };
 
 export const config = Object.freeze(_config);
