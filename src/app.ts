@@ -1,14 +1,18 @@
 // import expressJS here.
 import express from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import configureRoute from "./routers/configureRoute";
 
 const app = express();
 
-// routes define here.
+// Root Endpoint
 app.get("/", (req, res, next) => {
-    res.json({ message: "welcome to my first api server" });
+    res.json({ message: "Welcome To The Server" });
     next();
 });
+
+// Configure route here.
+configureRoute(app);
 
 // Step: Error handling always last me rakhe,  globalErrorHandler function ka reference pass kare bus.
 app.use(globalErrorHandler);
