@@ -27,6 +27,11 @@ short: npm install -D typescript nodemon ts-node @types/node
 1. npm install dotenv
 2. npm i -D @types/dotenv
 
+
+#mongoose install for mongoDB Database.
+1. npm i mongoose.
+2. npm i -D @types/mongoose
+
 ```
 
 
