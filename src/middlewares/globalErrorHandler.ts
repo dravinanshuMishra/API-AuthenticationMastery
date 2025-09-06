@@ -7,10 +7,12 @@ const globalErrorHandler = (err: HttpError, req: Request, res: Response, next: N
   const statusCode = err.statusCode || 500;
 
   res.status(statusCode).json({
-    message: err.message,
+    success: false,
+    statusCode,
+    message: err.message || "Something went wrong",
     errorStack: config.node_env === "development" ? err.stack : "",
   });
-  next();
+  // next();  
 }
 
 export default globalErrorHandler;
