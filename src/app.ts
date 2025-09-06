@@ -5,6 +5,12 @@ import configureRoute from "./routers/configureRoute";
 
 const app = express();
 
+// express.json(), converts JSON string data into JS object. without isake req.body undefined dega.
+app.use(express.json());
+
+// Agar form-data aata hai to (optional)
+app.use(express.urlencoded({ extended: true }));
+
 // Root Endpoint
 app.get("/", (req, res, next) => {
     res.json({ message: "Welcome To The Server" });

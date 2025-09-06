@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import createHttpError from "http-errors";
+import { registerUser } from "../services/userService";
 
 // functions way to create controllers.
 const userControllerPost = async (
@@ -6,11 +8,24 @@ const userControllerPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  res.json({
-    message: "user Registered",
-  });
+  // console.log(req.body);
 
-  next();
+  // 1. validation.
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    const error = createHttpError(400, "All Fields are required");
+    return next(error);
+  }   
+
+  // 2. process.
+  const user = await registerUser(name, email, password);
+  console.log("controller :: ",user);
+
+  // 3. response.
+  res.status(201).json({
+    message: "user Registered",
+    data: user
+  });
 };
 
 export { userControllerPost };
