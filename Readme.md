@@ -36,6 +36,11 @@ short: npm install -D typescript nodemon ts-node @types/node
 1. npm i http-errors
 2. npm i -D @types/http-errors
 
+
+## For inscription and decription password hased.
+1. npm i bcrypt
+2. npm i -D @types/bcrypt
+
 ```
 
 

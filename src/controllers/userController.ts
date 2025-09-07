@@ -20,6 +20,7 @@ const userControllerPost = async (
   // 2. process.
   const user = await registerUser(name, email, password);
   console.log("controller :: ",user);
+  next(user);
 
   // 3. response.
   res.status(201).json({
