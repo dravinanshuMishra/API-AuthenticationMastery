@@ -14,8 +14,6 @@ const _config = {
   backend_url: process.env.BACKEND_URL,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
   refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
-  access_token_life: process.env.ACCESS_TOKEN_LIFE,
-  refresh_token_life: process.env.REFRESH_TOKEN_LIFE
 };
 
 export const config = Object.freeze(_config);

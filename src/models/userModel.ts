@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema<userTypes>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true } // createdAt, updatedAt (mongoose feature. automatic add these two fields in schema and manage them automatically.)
 );
 
 // step: 2. model create.
