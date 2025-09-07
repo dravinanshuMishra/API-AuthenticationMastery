@@ -41,6 +41,10 @@ short: npm install -D typescript nodemon ts-node @types/node
 1. npm i bcrypt
 2. npm i -D @types/bcrypt
 
+# For Json Web Token.
+1. npm i jsonwebtoken
+2. npm i -D @types/jsonwebtoken
+
 ```
 
 

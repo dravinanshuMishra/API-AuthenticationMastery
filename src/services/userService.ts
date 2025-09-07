@@ -15,8 +15,22 @@ const registerUser = async(name: string, email:string, password: string) => {
   // step: 2. password hased.
   const hasedPassword = await bcrypt.hash(password,10);
 
-  // later: yaha mongoose model ka use karke DB save karoge, business logic likho yaha pr.
-  return { name, email, password: hasedPassword }; 
+  // step: 3. user create.
+  const newUser = await userModel.create({
+    name: name,
+    email: email,
+    password: hasedPassword
+  });
+  console.log("newUser", newUser);
+
+  // step: 4. user save.
+  await newUser.save();
+
+  // step: 5. token create.
+
+
+  // step: last. response return.
+  return { newUser };
 };
 
 export { registerUser };

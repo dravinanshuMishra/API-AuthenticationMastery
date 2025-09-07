@@ -17,7 +17,7 @@ const userControllerPost = async (
     return next(error);
   }   
 
-  // 2. process.
+  // 2. process.(DB calls)
   const user = await registerUser(name, email, password);
   console.log("controller :: ",user);
   next(user);
