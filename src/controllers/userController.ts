@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
 import { registerUser } from "../services/userService";
 
-// functions way to create controllers.
+// user register controller.
 const userControllerPost = async (
   req: Request,
   res: Response,
@@ -22,6 +22,7 @@ const userControllerPost = async (
 
     // 3. response.
     res.status(201).json({
+      statusCode: 201,
       message: "user Registered",
       data: user,
     });
@@ -30,4 +31,17 @@ const userControllerPost = async (
   }
 };
 
-export { userControllerPost };
+
+// user login controller.
+const userLogin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.status(200).send({
+      status: 200,
+      message: "user login",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { userControllerPost, userLogin };

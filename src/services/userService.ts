@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
 const registerUser = async (name: string, email: string, password: string) => {
-  console.log("register", name, email, password);
+  // console.log("register", name, email, password);
 
   // step 1. check if user already exists.
   const existingUser = await userModel.findOne({ email: email });
