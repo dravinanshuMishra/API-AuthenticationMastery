@@ -20,7 +20,7 @@ const bookUploadService = async(files: UploadedFiles) => {
         public_id: `book_cover_${Date.now()}`,
         format: coverImageMimeType
     });
-    console.log("coverImageUpload ::", coverImageUpload);
+    // console.log("coverImageUpload ::", coverImageUpload);
 
     // STEP: 2. FOR PDF FILE UPLOAD TO CLOUDINARY.
     const pdfFileName = files.file[0].filename;
@@ -34,7 +34,7 @@ const bookUploadService = async(files: UploadedFiles) => {
         public_id: `book_pdf_${Date.now()}`,
         format: pdfFileMimeType
     });
-    console.log("pdfFileUpload ::", pdfFileUpload);
+    // console.log("pdfFileUpload ::", pdfFileUpload);
 
     // STEP: 3. Return the uploaded file details.
     return {
@@ -47,10 +47,10 @@ const bookUploadService = async(files: UploadedFiles) => {
 // STORE BOOKS ALL DATA FROM DATABASE.
 const bookServices = async (files: BookFiles, meta: BookMeta) => {
 //   console.log("db calles ::", files, meta);
-  console.log(files.coverImage.secure_url);
-  console.log(files.pdfFile.secure_url);
-  console.log(meta.title);
-  console.log(meta.genre);
+  // console.log(files.coverImage.secure_url);
+  // console.log(files.pdfFile.secure_url);
+  // console.log(meta.title);
+  // console.log(meta.genre);
 
   const newBook = await bookModel.create({
     title: meta?.title,
@@ -59,7 +59,7 @@ const bookServices = async (files: BookFiles, meta: BookMeta) => {
     coverImage: files.coverImage.secure_url,
     file: files.pdfFile.secure_url
   });
-  console.log("newBook ::", newBook);
+  // console.log("newBook ::", newBook);
 
   // DB entry banane ka code
   return { newBook };

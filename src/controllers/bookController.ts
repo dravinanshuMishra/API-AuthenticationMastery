@@ -11,11 +11,11 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
 
     //  STEP: 1. Call the service function for cloudinary upload files.
     const data = await bookUploadService(req.files as UploadedFiles);
-    console.log("This is controller book services called here ::", data);
+    // console.log("This is controller book services called here ::", data);
 
     // STEP: 2. Create book entry in DB.
     const bookData = await bookServices(data, req.body);
-    console.log("controller DB calles",bookData);
+    // console.log("controller DB calles",bookData);
 
    
     // STEP: 3. Delete files from local uploads folder.
