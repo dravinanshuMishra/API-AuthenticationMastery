@@ -36,7 +36,7 @@ const fileFilter = (
 // Step: 3. Book upload with limit set.
 const bookUpload = multer({
   storage,
-  limits: { fileSize: 30 * 1024 * 1024 }, // 30 MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
   fileFilter,
 });
 
