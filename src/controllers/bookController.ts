@@ -1,50 +1,35 @@
 import { NextFunction, Request, Response } from "express";
-import cloudinary from "../config/cloudinaryConfig";
-import path from "node:path";
+import { bookServices, bookUploadService } from "../services/bookUploadService";
+import { UploadedFiles } from "../types/bookTypes";
+import deleteLocalFile from "../utils/deleteLocalFile";
 
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // console.log("This is controller book ::", req.files);
+    // console.log("This is controller book body ::", req.body);
+    // const {title, genre} = req.body;
 
-    console.log(req.files);
-    console.log(req.body);
+    //  STEP: 1. Call the service function for cloudinary upload files.
+    const data = await bookUploadService(req.files as UploadedFiles);
+    console.log("This is controller book services called here ::", data);
 
-  // Type causting
-    const files = req.files as {
-      [fieldname: string]: Express.Multer.File[];
-    };
-    const coverImageMimeType = files.coverImage[0].mimetype.split("/")[1];
-    const fileName = files.coverImage[0].filename;
-    const filePath = path.resolve(__dirname, "../../public/data/uploads", fileName);
-    console.log(coverImageMimeType, fileName, filePath);
+    // STEP: 2. Create book entry in DB.
+    const bookData = await bookServices(data, req.body);
+    console.log("controller DB calles",bookData);
 
-    // Upload to cloudinary, coverImage.
-    const uploadFiles = await cloudinary.uploader.upload(filePath, {
-      folder: "books-covers",
-      filename_override: fileName,
-      resource_type: "auto",
-      public_id: `book_cover_${Date.now()}`,
-      format: coverImageMimeType
-    });
-    console.log(uploadFiles);
+   
+    // STEP: 3. Delete files from local uploads folder.
+    const coverImageFilePath = `public/data/uploads/${(req.files as UploadedFiles).coverImage[0].filename}`;
+    const pdfFilePath = `public/data/uploads/${(req.files as UploadedFiles).file[0].filename}`;
+    await deleteLocalFile(coverImageFilePath);
+    await deleteLocalFile(pdfFilePath);
 
-    // Book ke liye bhi upload karna hai cloudinary pe.
-    const bookMimeType = files.file[0].mimetype.split("/")[1];
-    const bookFileName = files.file[0].filename;
-    const bookFilePath = path.resolve(__dirname, "../../public/data/uploads", bookFileName);
-    console.log(bookMimeType, bookFileName, bookFilePath);
-
-    // Upload to cloudinary, book.
-    const uploadBook = await cloudinary.uploader.upload(bookFilePath, {
-      folder: "books-files",
-      filename_override: bookFileName,
-      resource_type: "auto",
-      public_id: `book_${Date.now()}`,
-      format: bookMimeType
-    });
-    console.log(uploadBook);
-
-    res.json({
+    // STEP: 4. Send response.
+    res.status(201).json({
+      status: "success",
+      statusCode: 201,
       message: "created books",
+      data: bookData
     });
   } catch (error) {
     next(error);
