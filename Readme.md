@@ -48,7 +48,7 @@ short: npm install -D typescript nodemon ts-node @types/node
 # install multer for sends multiparts forms data.
 1. npm install multer
 2. npm install -D @types/multer
-
+3. npm i cloudinary
 
 ```
 

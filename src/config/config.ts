@@ -12,8 +12,13 @@ const _config = {
   db_options: process.env.DB_OPTIONS,
   node_env: process.env.NODE_ENV,
   backend_url: process.env.BACKEND_URL,
+  // JWT SECRET KEYS.
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
   refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
+  // Cloudinary Configurations.
+  cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
 };
 
 export const config = Object.freeze(_config);
