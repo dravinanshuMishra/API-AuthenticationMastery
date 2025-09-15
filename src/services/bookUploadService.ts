@@ -2,6 +2,7 @@ import path from "node:path";
 import cloudinary from "../config/cloudinaryConfig";
 import { BookFiles, BookMeta, UploadedFiles } from "../types/bookTypes";
 import bookModel from "../models/bookModel";
+import { Types } from "mongoose";
 
 // BOOK UPLOAD SERVICE FOR CLOUDINARY.
 const bookUploadService = async(files: UploadedFiles) => {
@@ -45,8 +46,8 @@ const bookUploadService = async(files: UploadedFiles) => {
 
 
 // STORE BOOKS ALL DATA FROM DATABASE.
-const bookServices = async (files: BookFiles, meta: BookMeta) => {
-//   console.log("db calles ::", files, meta);
+const bookServices = async (files: BookFiles, meta: BookMeta, id: Types.ObjectId ) => {
+  console.log("db calles ::", files, meta, id);
   // console.log(files.coverImage.secure_url);
   // console.log(files.pdfFile.secure_url);
   // console.log(meta.title);
@@ -54,7 +55,7 @@ const bookServices = async (files: BookFiles, meta: BookMeta) => {
 
   const newBook = await bookModel.create({
     title: meta?.title,
-    author: "68bfd742b59ff91a24eea09f", // hardcoded user id, later change with dynamic id.
+    author: id, // user id.
     genre: meta?.genre,
     coverImage: files.coverImage.secure_url,
     file: files.pdfFile.secure_url
