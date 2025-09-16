@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import {
-  bookServices,
   bookUpdate,
   bookUploadService,
 } from "../services/bookUploadService";
 import { FileGroup, UploadedFiles } from "../types/bookTypes";
-import deleteLocalFile from "../utils/deleteLocalFile";
 import { AuthRequest } from "../types/authenticationType";
 import { Types } from "mongoose";
 import createHttpError from "http-errors";
@@ -20,45 +18,72 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
   session.startTransaction();
 
   try {
-    // STEP: 2. Validate book data.
-    await bookValidation(req.body, req.files as UploadedFiles);
+    const { title, genre } = req.body;
+    // console.log("title :", title);
+    // console.log("genre :", genre);
+    // STEP: 2. Validate book data safely, Convert req.files to type-safe UploadedFiles with fallback
+    const uploadedFiles: UploadedFiles = {
+      coverImage: (req.files as UploadedFiles)?.coverImage || [],
+      file: (req.files as UploadedFiles)?.file || [],
+    };
+    // Call validation
+    await bookValidation(req.body, uploadedFiles);
 
     // Extra Things :: controller side userId get. who we set in authMiddleware request object.
     const _req = req as AuthRequest;
     const userId = new Types.ObjectId(_req.userId); // ✅ convert string → ObjectId
     console.log("userId controller side ::", userId);
 
-    //  STEP: 1. Call the service function for cloudinary upload files.
-    const data = await bookUploadService(req.files as UploadedFiles);
-    // console.log("This is controller book services called here ::", data);
+    // STEP: 3. Create a blank book entry in DB.
+    const newBook = await bookModel.create(
+      [
+        {
+          title: title,
+          author: userId,
+          genre: genre,
+          coverImage: "",
+          file: "",
+        },
+      ],
+      { session }
+    );
+    console.log("ye hai ::", newBook[0]?._id);
+    const bookId = newBook[0]?._id;
 
-    // STEP: 2. Create book entry in DB.
-    const bookData = await bookServices(data, req.body, userId);
-    // console.log("controller DB calles",bookData);
+    // Step: 4. Ab cloudinary upload karo, bookId pass karke
+    const data = await bookUploadService(req.files as UploadedFiles, bookId);
+    console.log(data);
 
-    // STEP: 3. Delete files from local uploads folder.
-    const coverImageFilePath = `public/data/uploads/${
-      (req.files as UploadedFiles).coverImage[0].filename
-    }`;
-    const pdfFilePath = `public/data/uploads/${
-      (req.files as UploadedFiles).file[0].filename
-    }`;
-    await deleteLocalFile(coverImageFilePath);
-    await deleteLocalFile(pdfFilePath);
+    // STEP: 5. Upload ke baad book update karo
+    newBook[0].coverImage = data.coverImage.secure_url;
+    newBook[0].file = data.pdfFile.secure_url;
+    await newBook[0].save();
 
-    // STEP: 4. Send response.
+    // STEP: 4. Commit transaction.
+    await session.commitTransaction();
+    session.endSession();
+
+    // STEP: 6. Local temp files delete
+    await cleanupLocalFiles(req.files as UploadedFiles);
+
     res.status(201).json({
       status: "success",
       statusCode: 201,
-      message: "created books",
-      data: bookData,
+      message: "Book created successfully",
+      data: newBook,
     });
   } catch (error) {
-    // ❌ Validation / Upload / DB error -> delete temp files if exist
+    // Rollback if upload fails.
+    await session.abortTransaction();
+    session.endSession();
+
+    // Validation / Upload / DB error -> delete temp files if exist
     if (req.files) {
       await cleanupLocalFiles(req.files as UploadedFiles);
     }
     next(error);
+  } finally {
+    session.endSession();
   }
 };
 

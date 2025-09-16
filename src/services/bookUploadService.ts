@@ -1,7 +1,6 @@
 import path from "node:path";
 import cloudinary from "../config/cloudinaryConfig";
 import {
-  BookFiles,
   BookMeta,
   FileGroup,
   UploadedFiles,
@@ -12,9 +11,7 @@ import createHttpError from "http-errors";
 import deleteLocalFile from "../utils/deleteLocalFile";
 
 // BOOK UPLOAD SERVICE FOR CLOUDINARY.
-const bookUploadService = async (files: UploadedFiles) => {
-  // Business Logic
-  // console.log("files bookUploadService ::", files);
+const bookUploadService = async (files: UploadedFiles, bookId: string) => {
 
   // STEP: 1. FOR COVER IMAGE AND PDF FILE UPLOAD TO CLOUDINARY.
   const coverImageFileName = files.coverImage[0].filename;
@@ -30,7 +27,7 @@ const bookUploadService = async (files: UploadedFiles) => {
       resource_type: "image",
       folder: "book_covers",
       filename_override: coverImageFileName,
-      public_id: `book_cover_${Date.now()}`,
+      public_id: `book_cover_${bookId}`,
       format: coverImageMimeType,
     }
   );
@@ -48,7 +45,7 @@ const bookUploadService = async (files: UploadedFiles) => {
     resource_type: "auto",
     folder: "book_pdfs",
     filename_override: pdfFileName,
-    public_id: `book_pdf_${Date.now()}`,
+    public_id: `book_pdf_${bookId}`,
     format: pdfFileMimeType,
   });
   // console.log("pdfFileUpload ::", pdfFileUpload);
@@ -58,31 +55,6 @@ const bookUploadService = async (files: UploadedFiles) => {
     coverImage: coverImageUpload,
     pdfFile: pdfFileUpload,
   };
-};
-
-// STORE BOOKS ALL DATA FROM DATABASE.
-const bookServices = async (
-  files: BookFiles,
-  meta: BookMeta,
-  id: Types.ObjectId
-) => {
-  // console.log("db calles ::", files, meta, id);
-  // console.log(files.coverImage.secure_url);
-  // console.log(files.pdfFile.secure_url);
-  // console.log(meta.title);
-  // console.log(meta.genre);
-
-  const newBook = await bookModel.create({
-    title: meta?.title,
-    author: id, // user id.
-    genre: meta?.genre,
-    coverImage: files.coverImage.secure_url,
-    file: files.pdfFile.secure_url,
-  });
-  // console.log("newBook ::", newBook);
-
-  // DB entry banane ka code
-  return { newBook };
 };
 
 // Book Update services.
@@ -178,4 +150,4 @@ const bookUpdate = async (
   return { updateBook };
 };
 
-export { bookUploadService, bookServices, bookUpdate };
+export { bookUploadService,  bookUpdate };

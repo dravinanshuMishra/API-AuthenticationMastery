@@ -16,11 +16,13 @@ const bookSchema = new mongoose.Schema<bookTypes>({
    },
    coverImage: {
       type: String,
-      required: true,
+      required: false,
+      default: ""
    },
    file: {
       type: String,
-      required: true
+      required: false,
+      default: ""
    }
 }, {timestamps: true});
 
