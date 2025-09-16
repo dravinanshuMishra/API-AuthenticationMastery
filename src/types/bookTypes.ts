@@ -29,4 +29,28 @@ interface BookMeta {
 }
 
 
+// #############################
+// FOR UPDATE BOOKS TYPE HERE.
+// #############################
+// Single uploaded file type
+export interface FileItem {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+}
+
+// Files object type (req.files shape)
+export interface FileGroup {
+  coverImage: FileItem[];
+  file: FileItem[];
+}
+
+
+
+
 export { UploadedFiles, BookFiles, BookMeta }
