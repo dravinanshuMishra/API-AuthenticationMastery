@@ -10,6 +10,7 @@ import createHttpError from "http-errors";
 import bookValidation from "../validations/bookValidtion";
 import cleanupLocalFiles from "../utils/cleanupLocalFiles";
 import bookModel from "../models/bookModel";
+import cloudinary from "../config/cloudinaryConfig";   
 
 // Create Book Controller.
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +35,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     // Extra Things :: controller side userId get. who we set in authMiddleware request object.
     const _req = req as AuthRequest;
     const userId = new Types.ObjectId(_req.userId); // ✅ convert string → ObjectId
-    console.log("userId controller side ::", userId);
+    // console.log("userId controller side ::", userId);
 
     // STEP: 3. Create a blank book entry in DB.
     const newBook = await bookModel.create(
@@ -54,12 +55,16 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
 
     // Step: 4. Ab cloudinary upload karo, bookId pass karke
     const data = await bookUploadService(req.files as UploadedFiles, bookId);
-    console.log(data);
+    console.log("step 4: data ::",data);
 
     // STEP: 5. Upload ke baad book update karo
     newBook[0].coverImage = data.coverImage.secure_url;
     newBook[0].file = data.pdfFile.secure_url;
+    newBook[0].coverImagePublicId = data.coverImage.public_id;
+    newBook[0].filePublicId = data.pdfFile.public_id;
     await newBook[0].save();
+
+    console.log("NEW BOOK", newBook);
 
     // STEP: 4. Commit transaction.
     await session.commitTransaction();
@@ -200,23 +205,34 @@ const deleteABook = async (req: Request, res: Response, next: NextFunction) => {
       throw createHttpError(400, "Invalid book ID format");
     }
 
-    // 2. Delete the book (returns the deleted document if found)
-    const deletedBook = await bookModel.findByIdAndDelete(bookId);
-
-    if (!deletedBook) {
+    // 2. Find the book
+    const book = await bookModel.findById(bookId);
+    if (!book) {
       throw createHttpError(404, "Book is not available");
     }
 
-    // 3. Respond
+    // 3. Delete image from Cloudinary (if exists)
+    if (book.coverImagePublicId) {
+      await cloudinary.uploader.destroy(book.coverImagePublicId);
+    }
+     if (book.filePublicId) {
+      await cloudinary.uploader.destroy(book.filePublicId);
+    }
+
+    // 4. Delete from DB
+    await book.deleteOne();
+
+    // 5. Respond
     res.status(200).json({
       statusCode: 200,
       statusText: "OK",
       message: "Book deleted successfully",
-      data: deletedBook,
+      data: book,
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 export { createBook, updateBook, getAllBook, getSpecificBook, deleteABook };
