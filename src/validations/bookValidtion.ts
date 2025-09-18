@@ -8,6 +8,8 @@ import { BookMeta, UploadedFiles } from "../types/bookTypes";
  * @param files Uploaded files (coverImage, file)
  */
 const bookValidation = async (book: BookMeta, files: UploadedFiles) => {
+
+    // console.log(files);
   const { title, genre } = book;
 
   // STEP 0: Validate metadata

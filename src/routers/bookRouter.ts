@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBook, updateBook } from '../controllers/bookController';
+import { createBook, deleteABook, getAllBook, getSpecificBook, updateBook } from '../controllers/bookController';
 import bookUpload from '../middlewares/bookMulter';
 import authMiddleware from '../middlewares/authMiddleware';
 
@@ -18,10 +18,14 @@ bookRouters.put("/update-book/:bookId", authMiddleware, bookUpload.fields([
     {name: "coverImage", maxCount: 1}
 ]), updateBook);
 
-// Delete Book.
+// Get All Books. (Non- authenticate user can see the books)
+bookRouters.get("/all-books", getAllBook);
 
-// Get Book by Id.
+// Get Book by Id. (when user update the book, user can edit the book)
+bookRouters.get("/book/:bookId", authMiddleware, getSpecificBook);
 
-// Get All Books.
+// DELETE A BOOK BY ID.
+bookRouters.delete("/delete-book/:bookId", authMiddleware, deleteABook);
+
 
 export default bookRouters;

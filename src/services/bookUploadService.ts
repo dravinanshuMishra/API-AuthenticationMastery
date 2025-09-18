@@ -12,7 +12,6 @@ import deleteLocalFile from "../utils/deleteLocalFile";
 
 // BOOK UPLOAD SERVICE FOR CLOUDINARY.
 const bookUploadService = async (files: UploadedFiles, bookId: string) => {
-
   // STEP: 1. FOR COVER IMAGE AND PDF FILE UPLOAD TO CLOUDINARY.
   const coverImageFileName = files.coverImage[0].filename;
   const coverImageFilePath = path.resolve(

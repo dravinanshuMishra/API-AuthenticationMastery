@@ -5,7 +5,7 @@ import {
 } from "../services/bookUploadService";
 import { FileGroup, UploadedFiles } from "../types/bookTypes";
 import { AuthRequest } from "../types/authenticationType";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import createHttpError from "http-errors";
 import bookValidation from "../validations/bookValidtion";
 import cleanupLocalFiles from "../utils/cleanupLocalFiles";
@@ -22,10 +22,12 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     // console.log("title :", title);
     // console.log("genre :", genre);
     // STEP: 2. Validate book data safely, Convert req.files to type-safe UploadedFiles with fallback
+    // console.log(req.files);
     const uploadedFiles: UploadedFiles = {
       coverImage: (req.files as UploadedFiles)?.coverImage || [],
       file: (req.files as UploadedFiles)?.file || [],
     };
+    // console.log(uploadedFiles);
     // Call validation
     await bookValidation(req.body, uploadedFiles);
 
@@ -123,4 +125,98 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { createBook, updateBook };
+// GET ALL BOOKS.
+const getAllBook = async(req: Request, res: Response, next: NextFunction) => {
+   try {
+    // 1. Get page & limit from query params (default page=1, limit=100).
+    const page = parseInt(req.params.page as string) || 1;
+    const limit = parseInt(req.params.limit as string) || 100;
+
+    // 2. calculate how many documents are skip.
+    const skip = (page - 1) * limit;
+
+    // 3. DB call with pagination. 
+    const book = await bookModel.find().skip(skip).limit(limit);
+
+    // 4. count total documents.
+    const total = await bookModel.countDocuments();
+
+    // 5. check books are available or not.
+    if(!book || book.length === 0) {
+       throw createHttpError(404, "No books available");
+    }
+
+    // 6. finally send responsne.
+     res.status(200).json({
+      statusCode: 200,
+      statusText: "OK",
+      message: "All Books retrieved successfully",
+      page,
+      limit,
+      totalBooks: total,
+      totalPage: Math.ceil(total/limit),
+      data: book
+     })
+   } catch (error) {
+      next(error);
+   }
+}
+
+// GET SPECIFIC BOOK.
+const getSpecificBook = async(req: Request, res: Response, next: NextFunction) => {
+   try {
+    const bookId = req.params.bookId;
+    // console.log(req.params.bookId);
+
+     // Validate ObjectId before hitting DB (avoids CastError crash)
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      throw createHttpError(400, "Invalid book ID format");
+    }
+
+    const book = await bookModel.findById({_id: bookId});
+    if(!book) {
+      throw createHttpError(404, "this book is not present in my data base");
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      statusText: "OK",
+      message: "Book retrieved successfully",
+      data: book,
+    })
+   } catch (error) {
+     next(error);
+   }
+}
+
+
+// DELETE A BOOK BY ID
+const deleteABook = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { bookId } = req.params;
+
+    // 1. Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      throw createHttpError(400, "Invalid book ID format");
+    }
+
+    // 2. Delete the book (returns the deleted document if found)
+    const deletedBook = await bookModel.findByIdAndDelete(bookId);
+
+    if (!deletedBook) {
+      throw createHttpError(404, "Book is not available");
+    }
+
+    // 3. Respond
+    res.status(200).json({
+      statusCode: 200,
+      statusText: "OK",
+      message: "Book deleted successfully",
+      data: deletedBook,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createBook, updateBook, getAllBook, getSpecificBook, deleteABook };
