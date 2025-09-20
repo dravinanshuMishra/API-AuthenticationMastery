@@ -50,6 +50,11 @@ short: npm install -D typescript nodemon ts-node @types/node
 2. npm install -D @types/multer
 3. npm i cloudinary
 
+
+# ADD CORS (cross origin resource sharing)
+1. npm i cors
+2. npm i -D @types/cors
+
 ```
 
 

@@ -12,6 +12,7 @@ const _config = {
   db_options: process.env.DB_OPTIONS,
   node_env: process.env.NODE_ENV,
   backend_url: process.env.BACKEND_URL,
+  frontend_url: process.env.FRONTEND_URL,
   // JWT SECRET KEYS.
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
   refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
